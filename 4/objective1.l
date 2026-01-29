@@ -13,7 +13,7 @@ int yywrap() {
 }
 
 int main() {
-    printf("Enter a string (mix of text and numbers):\n");
+    // printf("Enter a string (mix of text and numbers):\n");
     yylex();
     return 0;
 }

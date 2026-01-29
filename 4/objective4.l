@@ -22,7 +22,7 @@ int yywrap() {
 }
 
 int main() {
-    printf("Enter password:\n");
+    // printf("Enter password:\n");
     yylex();
     
     int valid = 1;

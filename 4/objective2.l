@@ -13,7 +13,7 @@ int yywrap() {
 }
 
 int main() {
-    printf("Enter text containing 'charusat':\n");
+    // printf("Enter text containing 'charusat':\n");
     yylex();
     return 0;
 }
