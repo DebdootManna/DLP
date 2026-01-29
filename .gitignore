@@ -1,0 +1,181 @@
+# macOS System Files
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# macOS Thumbnails
+._*
+
+# macOS Directories
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# macOS Files that might appear in the root of a volume
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# Compiled Executables
+1
+2
+3
+4/objective1
+4/objective2
+4/objective3
+4/objective4
+
+# Object Files
+*.o
+*.obj
+*.lo
+*.slo
+*.ko
+*.elf
+
+# Libraries
+*.a
+*.la
+*.lib
+*.so
+*.so.*
+*.dylib
+
+# Debug Symbols (macOS)
+*.dSYM/
+
+# Compiled Dynamic libraries
+*.dll
+
+# Lex/Flex Generated Files
+lex.yy.c
+lex.yy.cc
+y.tab.c
+y.tab.h
+
+# Yacc/Bison Generated Files
+*.tab.c
+*.tab.h
+
+# Compiler Cache
+.ccache/
+
+# Core Dumps
+core
+core.*
+*.core
+
+# Backup Files
+*~
+*.bak
+*.swp
+*.swo
+*.tmp
+*.temp
+*#
+
+# Editor Specific Files
+# VS Code
+.vscode/
+*.code-workspace
+
+# Vim
+*.swp
+*.swo
+*~
+.*.sw?
+Session.vim
+
+# Emacs
+\#*\#
+.\#*
+*~
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# IntelliJ IDEA / CLion
+.idea/
+*.iml
+*.iws
+out/
+
+# Eclipse
+.cproject
+.project
+.settings/
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+*.cmake
+
+# Build Directories
+build/
+bin/
+dist/
+out/
+
+# Log Files
+*.log
+
+# Temporary Test Files
+test_output.txt
+temp_*.txt
+output*.txt
+
+# C Preprocessor Output
+*.i
+*.ii
+*.s
+
+# Archive Files (but not if needed for submission)
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.rar
+*.7z
+
+# Windows System Files (if working on Windows)
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Package Manager Artifacts
+*.deb
+*.rpm
+
+# Python (if any Python scripts are added)
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+.Python
+venv/
+env/
+
+# Node (if any JavaScript tools are added)
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Valgrind Memory Check Output
+vgcore.*
+*.vglog
+
+# GDB History
+.gdb_history
+
+# Assembly Output
+*.asm
