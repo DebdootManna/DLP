@@ -1,4 +1,133 @@
-# macOS System Files
+# macOS system clutter
+.DS_Store
+.DS_Store?
+.AppleDouble
+.LSOverride
+Icon?
+._*
+.Spotlight-V100
+.Trashes
+.DocumentRevisions-V100
+.fseventsd
+.TemporaryItems
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# General build outputs (C / C++)
+a.out
+*.out
+*.o
+*.obj
+*.lo
+*.slo
+*.a
+*.la
+*.ko
+*.elf
+*.so
+*.so.*
+*.dylib
+*.dll
+*.exe
+*.map
+*.stackdump
+
+# Debug and symbol files
+*.dSYM/
+*.gch
+*.pch
+*.gcda
+*.gcno
+*.gcov
+core
+core.*
+*.core
+vgcore.*
+*.vglog
+.gdb_history
+
+# Lex / Yacc generated sources
+lex.yy.c
+lex.yy.cc
+y.tab.c
+y.tab.h
+*.tab.c
+*.tab.h
+*.tab.cpp
+*.tab.hpp
+*.output
+
+# Project-specific binaries produced by clang runs
+/1
+/2
+/3
+/4/objective1
+/4/objective2
+/4/objective3
+/4/objective4
+
+# Build directories and caches
+bin/
+build/
+dist/
+out/
+obj/
+tmp/
+temp/
+.cache/
+.ccache/
+
+# Logs, backups, and editor swap files
+*.log
+*.tmp
+*.temp
+*~
+*.bak
+*.swp
+*.swo
+.*.sw?
+Session.vim
+
+# IDE / Editor metadata
+.vscode/
+.idea/
+*.code-workspace
+*.iml
+*.iws
+.cproject
+.project
+.settings/
+*.sublime-project
+*.sublime-workspace
+
+# Python artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+venv/
+.venv/
+env/
+env.bak/
+
+# Node / package manager leftovers
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Misc archives and bundles
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.rar
+*.7z
+*.app# macOS System Files
 .DS_Store
 .AppleDouble
 .LSOverride
