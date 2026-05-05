@@ -1,124 +1,106 @@
 #include <iostream>
 #include <string>
-#include <stdexcept>
 #include <cmath>
+#include <stdexcept>
 #include <cctype>
 
-// Recursive descent parser implementing the SDD grammar:
-// L -> E n
-// E -> E + T | E - T | T
-// T -> T * F | T / F | F
-// F -> G ^ F | G        (right-associative exponentiation)
-// G -> ( E ) | digit/number
+using namespace std;
 
 class Parser {
-    std::string input;
-    size_t pos;
+    string s;
+    int pos = 0;
 
     void skipSpaces() {
-        while (pos < input.size() && input[pos] == ' ')
-            pos++;
+        while (pos < (int)s.size() && s[pos] == ' ') pos++;
     }
 
-    // G -> ( E ) | number
-    double parseG() {
-        skipSpaces();
-        if (pos >= input.size())
-            throw std::runtime_error("Invalid expression");
-
-        if (input[pos] == '(') {
-            pos++; // consume '('
-            double val = parseE();
+    double parseE() {
+        double val = parseT();
+        while (true) {
             skipSpaces();
-            if (pos >= input.size() || input[pos] != ')')
-                throw std::runtime_error("Invalid expression");
-            pos++; // consume ')'
-            return val;
-        }
-
-        // Parse number (integer or decimal)
-        if (isdigit(input[pos]) || input[pos] == '.') {
-            size_t start = pos;
-            while (pos < input.size() && (isdigit(input[pos]) || input[pos] == '.'))
+            if (pos < (int)s.size() && s[pos] == '+') {
                 pos++;
-            std::string numStr = input.substr(start, pos - start);
-            return std::stod(numStr);
+                val += parseT();
+            } else if (pos < (int)s.size() && s[pos] == '-') {
+                pos++;
+                val -= parseT();
+            } else break;
         }
-
-        throw std::runtime_error("Invalid expression");
+        return val;
     }
 
-    // F -> G ^ F | G  (right-associative)
+    double parseT() {
+        double val = parseF();
+        while (true) {
+            skipSpaces();
+            if (pos < (int)s.size() && s[pos] == '*') {
+                pos++;
+                val *= parseF();
+            } else if (pos < (int)s.size() && s[pos] == '/') {
+                pos++;
+                double d = parseF();
+                if (d == 0) throw runtime_error("Invalid expression");
+                val /= d;
+            } else break;
+        }
+        return val;
+    }
+
     double parseF() {
         double base = parseG();
         skipSpaces();
-        if (pos < input.size() && input[pos] == '^') {
-            pos++; // consume '^'
-            double exp = parseF(); // right-recursive for right-associativity
-            return std::pow(base, exp);
+        if (pos < (int)s.size() && s[pos] == '^') {
+            pos++;
+            double exp = parseF(); // right associative
+            return pow(base, exp);
         }
         return base;
     }
 
-    // T -> T * F | T / F | F  (left-associative, iterative)
-    double parseT() {
-        double val = parseF();
+    double parseG() {
         skipSpaces();
-        while (pos < input.size() && (input[pos] == '*' || input[pos] == '/')) {
-            char op = input[pos++];
-            double right = parseF();
-            if (op == '*')
-                val *= right;
-            else {
-                if (right == 0) throw std::runtime_error("Invalid expression");
-                val /= right;
-            }
-            skipSpaces();
-        }
-        return val;
-    }
 
-    // E -> E + T | E - T | T  (left-associative, iterative)
-    double parseE() {
-        double val = parseT();
-        skipSpaces();
-        while (pos < input.size() && (input[pos] == '+' || input[pos] == '-')) {
-            char op = input[pos++];
-            double right = parseT();
-            if (op == '+') val += right;
-            else           val -= right;
+        if (pos < (int)s.size() && s[pos] == '(') {
+            pos++;
+            double val = parseE();
             skipSpaces();
+            if (pos >= (int)s.size() || s[pos] != ')') throw runtime_error("Invalid expression");
+            pos++;
+            return val;
         }
-        return val;
+
+        if (pos < (int)s.size() && (isdigit((unsigned char)s[pos]) || s[pos] == '.')) {
+            int start = pos;
+            while (pos < (int)s.size() && (isdigit((unsigned char)s[pos]) || s[pos] == '.')) pos++;
+            return stod(s.substr(start, pos - start));
+        }
+
+        throw runtime_error("Invalid expression");
     }
 
 public:
-    double evaluate(const std::string& expr) {
-        input = expr;
+    double evaluate(const string& expr) {
+        s = expr;
         pos = 0;
-        double result = parseE();
+        double ans = parseE();
         skipSpaces();
-        if (pos != input.size())
-            throw std::runtime_error("Invalid expression");
-        return result;
+        if (pos != (int)s.size()) throw runtime_error("Invalid expression");
+        return ans;
     }
 };
 
 int main() {
-    std::string expr;
-    std::cout << "Enter arithmetic expression: ";
-    std::getline(std::cin, expr);
+    cout << "Enter arithmetic expression: ";
+    string expr;
+    getline(cin, expr);
 
     Parser parser;
     try {
-        double result = parser.evaluate(expr);
-        // Print as integer if result is whole number
-        if (result == (long long)result)
-            std::cout << (long long)result << std::endl;
-        else
-            std::cout << result << std::endl;
-    } catch (const std::exception&) {
-        std::cout << "Invalid expression" << std::endl;
+        double ans = parser.evaluate(expr);
+        if (ans == (long long)ans) cout << (long long)ans << "\n";
+        else cout << ans << "\n";
+    } catch (...) {
+        cout << "Invalid expression\n";
     }
 
     return 0;

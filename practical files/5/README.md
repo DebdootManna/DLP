@@ -377,3 +377,26 @@ struct   switch   typedef  union    unsigned void     volatile while
 ```
 (    )    {    }    [    ]    ;    ,    #
 ```
+
+
+---
+
+## C++ Version (Simple)
+
+A simple C++ lexical analyzer is added as `../5.cpp`.
+
+### Compile
+```bash
+g++ ../5.cpp -o lexical_cpp
+```
+
+### Run
+```bash
+./lexical_cpp
+```
+
+### Notes
+- Reads a C file and prints basic token categories plus symbol table entries.
+- Kept intentionally simple and easy to read.
+- Existing Lex and Python implementations are unchanged.
+

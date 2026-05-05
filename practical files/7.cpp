@@ -3,86 +3,50 @@
 #include <set>
 #include <vector>
 #include <string>
-#include <algorithm>
 
 using namespace std;
 
-// Grammar:
-// S -> A B C | D
-// A -> a | epsilon
-// B -> b | epsilon
-// C -> ( S ) | c
-// D -> A C
-
-// Non-terminals: S, A, B, C, D
-// Terminals: a, b, c, (, ), $
-// epsilon represented as ""
-
 map<string, vector<vector<string>>> grammar;
-map<string, set<string>> firstSets;
-map<string, set<string>> followSets;
-set<string> nonTerminals;
-set<string> terminals;
+map<string, set<string>> firstSet, followSet;
+set<string> nonTerminals = {"S", "A", "B", "C", "D"};
 
-bool isNonTerminal(const string& sym) {
-    return nonTerminals.count(sym) > 0;
+bool isNonTerminal(const string& s) {
+    return nonTerminals.count(s) > 0;
 }
 
-// Compute FIRST of a sequence of symbols (alpha)
-// Returns true if epsilon is in FIRST(alpha)
-bool computeFirstOfSequence(const vector<string>& seq, set<string>& result) {
-    if (seq.empty() || (seq.size() == 1 && seq[0] == "eps")) {
-        result.insert("eps");
-        return true;
-    }
+set<string> firstOfSequence(const vector<string>& seq) {
+    set<string> result;
+    bool allEps = true;
 
-    bool allHaveEpsilon = true;
-    for (const string& sym : seq) {
-        if (sym == "eps") {
-            // epsilon symbol, continue
-            continue;
-        }
-        if (!isNonTerminal(sym)) {
-            // terminal
-            result.insert(sym);
-            allHaveEpsilon = false;
+    for (const string& symbol : seq) {
+        if (!isNonTerminal(symbol)) {
+            result.insert(symbol);
+            allEps = false;
             break;
-        } else {
-            // non-terminal: add FIRST(sym) - {eps}
-            for (const string& s : firstSets[sym]) {
-                if (s != "eps") result.insert(s);
-            }
-            if (firstSets[sym].count("eps") == 0) {
-                allHaveEpsilon = false;
-                break;
-            }
-            // eps in FIRST(sym), continue to next symbol
+        }
+
+        for (const string& x : firstSet[symbol]) if (x != "eps") result.insert(x);
+
+        if (!firstSet[symbol].count("eps")) {
+            allEps = false;
+            break;
         }
     }
 
-    if (allHaveEpsilon) {
-        result.insert("eps");
-        return true;
-    }
-    return false;
+    if (allEps) result.insert("eps");
+    return result;
 }
 
 void computeFirst() {
-    // Initialize
-    for (const string& nt : nonTerminals) {
-        firstSets[nt] = {};
-    }
-
     bool changed = true;
     while (changed) {
         changed = false;
         for (const string& nt : nonTerminals) {
-            for (const vector<string>& prod : grammar[nt]) {
-                set<string> tmp;
-                computeFirstOfSequence(prod, tmp);
-                for (const string& s : tmp) {
-                    if (firstSets[nt].count(s) == 0) {
-                        firstSets[nt].insert(s);
+            for (const auto& prod : grammar[nt]) {
+                set<string> temp = firstOfSequence(prod);
+                for (const string& x : temp) {
+                    if (!firstSet[nt].count(x)) {
+                        firstSet[nt].insert(x);
                         changed = true;
                     }
                 }
@@ -92,41 +56,32 @@ void computeFirst() {
 }
 
 void computeFollow() {
-    // Initialize
-    for (const string& nt : nonTerminals) {
-        followSets[nt] = {};
-    }
-    // Start symbol gets $
-    followSets["S"].insert("$");
+    followSet["S"].insert("$");
 
     bool changed = true;
     while (changed) {
         changed = false;
-        for (const string& nt : nonTerminals) {
-            for (const vector<string>& prod : grammar[nt]) {
+
+        for (const string& A : nonTerminals) {
+            for (const auto& prod : grammar[A]) {
                 for (int i = 0; i < (int)prod.size(); i++) {
-                    const string& sym = prod[i];
-                    if (!isNonTerminal(sym)) continue;
+                    string B = prod[i];
+                    if (!isNonTerminal(B)) continue;
 
-                    // Compute FIRST of the rest: prod[i+1 .. end]
-                    vector<string> rest(prod.begin() + i + 1, prod.end());
-                    set<string> firstRest;
-                    bool hasEps = computeFirstOfSequence(rest, firstRest);
+                    vector<string> beta(prod.begin() + i + 1, prod.end());
+                    set<string> firstBeta = beta.empty() ? set<string>{"eps"} : firstOfSequence(beta);
 
-                    for (const string& s : firstRest) {
-                        if (s != "eps") {
-                            if (followSets[sym].count(s) == 0) {
-                                followSets[sym].insert(s);
-                                changed = true;
-                            }
+                    for (const string& x : firstBeta) {
+                        if (x != "eps" && !followSet[B].count(x)) {
+                            followSet[B].insert(x);
+                            changed = true;
                         }
                     }
 
-                    // If eps in FIRST(rest), add FOLLOW(nt) to FOLLOW(sym)
-                    if (hasEps || rest.empty()) {
-                        for (const string& s : followSets[nt]) {
-                            if (followSets[sym].count(s) == 0) {
-                                followSets[sym].insert(s);
+                    if (firstBeta.count("eps")) {
+                        for (const string& x : followSet[A]) {
+                            if (!followSet[B].count(x)) {
+                                followSet[B].insert(x);
                                 changed = true;
                             }
                         }
@@ -138,61 +93,31 @@ void computeFollow() {
 }
 
 void printSet(const string& name, const string& nt, const set<string>& s) {
-    cout << name << "(" << nt << ") = {";
+    cout << name << "(" << nt << ") = { ";
     bool first = true;
-    for (const string& sym : s) {
+    for (const string& x : s) {
         if (!first) cout << ", ";
-        if (sym == "eps") cout << "e";
-        else cout << sym;
+        cout << (x == "eps" ? "e" : x);
         first = false;
     }
-    cout << "}" << endl;
+    cout << " }\n";
 }
 
 int main() {
-    // Define non-terminals
-    nonTerminals = {"S", "A", "B", "C", "D"};
-    terminals = {"a", "b", "c", "(", ")", "$"};
-
-    // Define grammar productions
-    // S -> A B C | D
-    grammar["S"] = {
-        {"A", "B", "C"},
-        {"D"}
-    };
-    // A -> a | eps
-    grammar["A"] = {
-        {"a"},
-        {"eps"}
-    };
-    // B -> b | eps
-    grammar["B"] = {
-        {"b"},
-        {"eps"}
-    };
-    // C -> ( S ) | c
-    grammar["C"] = {
-        {"(", "S", ")"},
-        {"c"}
-    };
-    // D -> A C
-    grammar["D"] = {
-        {"A", "C"}
-    };
+    grammar["S"] = {{"A", "B", "C"}, {"D"}};
+    grammar["A"] = {{"a"}, {"eps"}};
+    grammar["B"] = {{"b"}, {"eps"}};
+    grammar["C"] = {{"(", "S", ")"}, {"c"}};
+    grammar["D"] = {{"A", "C"}};
 
     computeFirst();
     computeFollow();
 
-    cout << "=== FIRST Sets ===" << endl;
-    // Print in order: S, A, B, C, D
-    for (const string& nt : {"S", "A", "B", "C", "D"}) {
-        printSet("First", nt, firstSets[nt]);
-    }
+    cout << "=== FIRST Sets ===\n";
+    for (string nt : {"S", "A", "B", "C", "D"}) printSet("First", nt, firstSet[nt]);
 
-    cout << endl << "=== FOLLOW Sets ===" << endl;
-    for (const string& nt : {"S", "A", "B", "C", "D"}) {
-        printSet("Follow", nt, followSets[nt]);
-    }
+    cout << "\n=== FOLLOW Sets ===\n";
+    for (string nt : {"S", "A", "B", "C", "D"}) printSet("Follow", nt, followSet[nt]);
 
     return 0;
 }

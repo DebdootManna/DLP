@@ -527,3 +527,26 @@ Master these fundamentals, and you'll have a strong foundation for building more
 ---
 
 ## 🎉 Happy Coding! 🚀
+
+
+---
+
+## C++ Alternative (Without Lex/Flex)
+
+A simple C++ alternative is added as `../4.cpp` that covers all 4 objectives using normal string/file handling.
+
+### Compile
+```bash
+g++ ../4.cpp -o objective_cpp
+```
+
+### Run
+```bash
+./objective_cpp
+```
+
+### Notes
+- Choose objective `1` to `4` from menu.
+- This is useful where Flex/Lex is not installed.
+- Existing `.l` files and scripts are untouched.
+
